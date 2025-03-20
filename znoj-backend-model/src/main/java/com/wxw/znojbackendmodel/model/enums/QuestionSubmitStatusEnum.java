@@ -14,17 +14,49 @@ import java.util.stream.Collectors;
  */
 public enum QuestionSubmitStatusEnum {
 
-    // 0 - 待判题、1 - 判题中、2 - 成功、3 - 失败
-    WAITING("等待中", 0),
-    RUNNING("判题中", 1),
-    SUCCEED("成功", 2),
-    FAILED("失败", 3);
+    /**
+    * 编译错误
+    */
+    COMPILE_ERROR("COMPILE_ERROR", "CE"),
+    /**
+     * 超时
+     */
+    TIME_LIMIT_EXCEEDED("TIME_LIMIT_EXCEEDED", "TLE"),
+    /**
+     * 内存超限
+     */
+    MEMORY_LIMIT_EXCEEDED("MEMORY_LIMIT_EXCEEDED", "MLE"),
+    /**
+     * 输出错误
+     */
+    WRONG_ANSWER("WRONG_ANSWER", "WA"),
+    /**
+     * 正确
+     */
+    ACCEPTED("ACCEPTED", "AC"),
+    /**
+     * 待判题
+     */
+    WAIT("WAIT", "WAIT"),
+    /**
+     * 判题中
+     */
+    JUDGING("JUDGING", "JUDGING"),
+    /**
+     * 运行时错误
+     */
+    RUNTIME_ERROR("RUNTIME_ERROR", "RE"),
+    /**
+     * 系统错误 —— 题目异常/判题机异常/SPJ特殊程序编译错误
+     */
+    SYSTEM_ERROR("SYSTEM_ERROR", "SE");
+
 
     private final String text;
 
-    private final Integer value;
+    private final String value;
 
-    QuestionSubmitStatusEnum(String text, Integer value) {
+    QuestionSubmitStatusEnum(String text, String value) {
         this.text = text;
         this.value = value;
     }
@@ -34,7 +66,7 @@ public enum QuestionSubmitStatusEnum {
      *
      * @return
      */
-    public static List<Integer> getValues() {
+    public static List<String> getValues() {
         return Arrays.stream(values()).map(item -> item.value).collect(Collectors.toList());
     }
 
@@ -44,7 +76,7 @@ public enum QuestionSubmitStatusEnum {
      * @param value
      * @return
      */
-    public static QuestionSubmitStatusEnum getEnumByValue(Integer value) {
+    public static QuestionSubmitStatusEnum getEnumByValue(String value) {
         if (ObjectUtils.isEmpty(value)) {
             return null;
         }
@@ -56,7 +88,7 @@ public enum QuestionSubmitStatusEnum {
         return null;
     }
 
-    public Integer getValue() {
+    public String getValue() {
         return value;
     }
 

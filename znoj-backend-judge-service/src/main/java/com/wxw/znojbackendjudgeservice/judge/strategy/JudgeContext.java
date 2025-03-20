@@ -10,8 +10,8 @@ import java.util.List;
 
 /**
  * @author by xxz
- * @Description
- * @date 2024/9/18
+ * @Description 判题上下文
+ * @date 2025/03/20
  * @throws
  */
 @Data
@@ -24,6 +24,10 @@ public class JudgeContext {
     private List<String> outputList;
 
     private List<JudgeCase> judgeCaseList;
+
+    private String compileMessage;
+
+    private String runTimeMessage;
 
     private Question question;
 

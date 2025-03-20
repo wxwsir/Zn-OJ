@@ -19,11 +19,24 @@ import java.util.List;
 @NoArgsConstructor
 public class CodeSandBoxResponse {
 
+    /**
+     * 输出列表
+     */
     private List<String> outputList;
-
-    private String message;
-
+    /**
+     * 编译响应信息
+     */
+    private String compileMessage;
+    /**
+     * 运行时错误信息
+     */
+    private String runtimeMessage;
+    /**
+     * 判题信息
+     */
     private JudgeInfo judgeInfo;
-
-    private Integer status;
+    /**
+     * 状态码
+     */
+    private String status;
 }

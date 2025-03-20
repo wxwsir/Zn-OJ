@@ -38,9 +38,10 @@ public class QuestionSubmit implements Serializable {
     private String judgeInfo;
 
     /**
-     * 判题状态（0 - 待判题、1 - 判题中、2 - 成功、3 - 失败）
+     * 判题状态（WAIT待判题、JUDGING判题中、AC成功、WA失败、
+     * TLE超时、MLE内存超限、RE运行时错误、CE编译错误）
      */
-    private Integer status;
+    private String status;
 
     /**
      * 题目 id

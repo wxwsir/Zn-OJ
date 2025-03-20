@@ -56,27 +56,34 @@ public class JudgeServiceImpl implements JudgeService{
         if(question == null){
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "题目不存在");
         }
-        if(!questionSubmit.getStatus().equals(QuestionSubmitStatusEnum.WAITING.getValue())){
+        if(!questionSubmit.getStatus().equals(QuestionSubmitStatusEnum.WAIT.getValue())){
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "不能重复判题");
         }
         QuestionSubmit updateQuestionSubmit = new QuestionSubmit();
         updateQuestionSubmit.setId(questionSubmitId);
-        updateQuestionSubmit.setStatus(QuestionSubmitStatusEnum.RUNNING.getValue());
+        updateQuestionSubmit.setStatus(QuestionSubmitStatusEnum.JUDGING.getValue());
         boolean update = questionFeignClient.updateQuestionSubmitById(updateQuestionSubmit);
         if(!update){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目状态更新错误");
         }
+
         // 2.调用代码沙箱获得代码运行结果
         CodeSandBox codeSandBox = CodeSandBoxFactory.newInstance(type);
         codeSandBox = new CodeSandBoxProxy(codeSandBox);
+        // 构造沙箱请求
         String language = questionSubmit.getLanguage();
         String code = questionSubmit.getCode();
         String judgeCase = question.getJudgeCase();
         List<JudgeCase> judgeCaseList = JSONUtil.toList(judgeCase, JudgeCase.class);
         List<String> inputList = judgeCaseList.stream().map(JudgeCase::getInput).collect(Collectors.toList());
         CodeSandBoxRequest sandBoxRequest = CodeSandBoxRequest.builder().language(language).code(code).inputList(inputList).build();
+        // 调用沙箱
         CodeSandBoxResponse codeSandBoxResponse = codeSandBox.run(sandBoxRequest);
+        // 获取编译和运行响应信息
+        String compileMessage = codeSandBoxResponse.getCompileMessage();
+        String runTimeMessage = codeSandBoxResponse.getRuntimeMessage();
         List<String> outputList = codeSandBoxResponse.getOutputList();
+
         // 3.根据沙箱的执行结果，执行判题逻辑，设置题目的判题状态和信息
         JudgeContext judgeContext = new JudgeContext();
         judgeContext.setJudgeInfo(codeSandBoxResponse.getJudgeInfo());
@@ -85,11 +92,14 @@ public class JudgeServiceImpl implements JudgeService{
         judgeContext.setJudgeCaseList(judgeCaseList);
         judgeContext.setQuestion(question);
         judgeContext.setQuestionSubmit(questionSubmit);
+        judgeContext.setCompileMessage(compileMessage);
+        judgeContext.setRunTimeMessage(runTimeMessage);
         JudgeInfo judgeInfo = judgeManager.doJudge(judgeContext);
+        String status = judgeInfo.getMessage();
         // 4.更新题目提交表
         updateQuestionSubmit = new QuestionSubmit();
         updateQuestionSubmit.setJudgeInfo(JSONUtil.toJsonStr(judgeInfo));
-        updateQuestionSubmit.setStatus(QuestionSubmitStatusEnum.SUCCEED.getValue());
+        updateQuestionSubmit.setStatus(status);
         updateQuestionSubmit.setId(questionSubmitId);
         update = questionFeignClient.updateQuestionSubmitById(updateQuestionSubmit);
         if(!update){

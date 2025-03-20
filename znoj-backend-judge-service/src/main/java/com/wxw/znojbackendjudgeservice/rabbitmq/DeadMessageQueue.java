@@ -43,7 +43,7 @@ public class DeadMessageQueue {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "提交的题目信息不存在");
         }
         // 把提交题目标为失败
-        questionSubmit.setStatus(QuestionSubmitStatusEnum.FAILED.getValue());
+        questionSubmit.setStatus(QuestionSubmitStatusEnum.SYSTEM_ERROR.getValue());
 
         boolean update = questionFeignClient.updateQuestionSubmitById(questionSubmit);
         if (!update) {

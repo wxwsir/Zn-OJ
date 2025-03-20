@@ -97,7 +97,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         questionSubmit.setCode(questionSubmitAddRequest.getCode());
         questionSubmit.setLanguage(language);
         // 设置初始状态
-        questionSubmit.setStatus(QuestionSubmitStatusEnum.WAITING.getValue());
+        questionSubmit.setStatus(QuestionSubmitStatusEnum.WAIT.getValue());
         questionSubmit.setJudgeInfo("{}");
         boolean save = this.save(questionSubmit);
         if (!save){
@@ -106,9 +106,6 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         Long questionSubmitId = questionSubmit.getId();
         // 发送消息----异步调用判题服务
         myMessageProducer.sendMessage("code_exchange", "my_routingKey", String.valueOf(questionSubmitId));
-//        CompletableFuture.runAsync(() -> {
-//            judgeFeignClient.doJudge(questionSubmitId);
-//        });
         return questionSubmit.getId();
     }
 
@@ -124,7 +121,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             return queryWrapper;
         }
         String language = questionSubmitQueryRequest.getLanguage();
-        Integer status = questionSubmitQueryRequest.getStatus();
+        String status = questionSubmitQueryRequest.getStatus();
         Long questionId = questionSubmitQueryRequest.getQuestionId();
         Long userId = questionSubmitQueryRequest.getUserId();
         String sortField = questionSubmitQueryRequest.getSortField();

@@ -24,8 +24,8 @@ public class ExampleCodeSandBox implements CodeSandBox {
         List<String> inputList = request.getInputList();
         CodeSandBoxResponse response = new CodeSandBoxResponse();
         response.setOutputList(inputList);
-        response.setMessage("测试执行成功");
-        response.setStatus(QuestionSubmitStatusEnum.SUCCEED.getValue());
+        response.setRuntimeMessage("测试执行成功");
+        response.setStatus(QuestionSubmitStatusEnum.ACCEPTED.getValue());
         JudgeInfo judgeInfo = new JudgeInfo();
         judgeInfo.setMessage(JudgeInfoMessageEnum.ACCEPTED.getText());
         judgeInfo.setMemory(100L);

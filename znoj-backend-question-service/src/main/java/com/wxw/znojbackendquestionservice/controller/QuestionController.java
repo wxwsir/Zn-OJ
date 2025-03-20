@@ -308,6 +308,7 @@ public class QuestionController {
         if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        // TODO 临时登录
 //        // 登录才能提交题目
 //        final User loginUser = userFeignClient.getLoginUser(request);
 //        // redisson限流
@@ -316,7 +317,7 @@ public class QuestionController {
 //            throw new BusinessException(ErrorCode.OPERATION_ERROR, "提交过于频繁，请稍后再试");
 //        }
         User loginUser = new User();
-        loginUser.setId(1890686644055453697L);
+        loginUser.setId(1902609056598626306L);
         long questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
         return ResultUtils.success(questionSubmitId);
     }
@@ -335,7 +336,12 @@ public class QuestionController {
         // 从数据库中查询原始的题目提交分页信息
         Page<QuestionSubmit> questionSubmitPage = questionSubmitService.page(new Page<>(current, size),
                 questionSubmitService.getQueryWrapper(questionSubmitQueryRequest));
-        final User loginUser = userFeignClient.getLoginUser(request);
+        // TODO 临时登录
+        //        final User loginUser = userFeignClient.getLoginUser(request);
+
+        User loginUser = new User();
+        loginUser.setId(1902609056598626306L);
+
         // 返回脱敏信息
         return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage, loginUser));
     }

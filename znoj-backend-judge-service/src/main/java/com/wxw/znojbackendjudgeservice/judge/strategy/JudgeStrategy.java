@@ -4,7 +4,7 @@ import com.wxw.znojbackendmodel.model.codesandbox.JudgeInfo;
 
 /**
  * @author by xxz
- * @Description  判题策略接口
+ * @Description  判题策略接口（普通判题、特殊判题、交互判题）
  * @date 2024/9/18
  * @throws
  */

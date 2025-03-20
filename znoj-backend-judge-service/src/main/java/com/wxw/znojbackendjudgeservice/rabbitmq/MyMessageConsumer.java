@@ -57,7 +57,7 @@ public class MyMessageConsumer {
             // 调用判题服务
             judgeService.doJudge(questionSubmitId);
             QuestionSubmit questionSubmit = questionFeignClient.getQuestionSubmitById(questionSubmitId);
-            if (!questionSubmit.getStatus().equals(QuestionSubmitStatusEnum.SUCCEED.getValue())) {
+            if (questionSubmit.getStatus().equals(QuestionSubmitStatusEnum.SYSTEM_ERROR.getValue())) {
                 channel.basicNack(deliveryTag, false, false);
                 throw new BusinessException(ErrorCode.OPERATION_ERROR, "判题失败");
             }
