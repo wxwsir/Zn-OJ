@@ -74,17 +74,19 @@ public class JudgeServiceImpl implements JudgeService{
         String language = questionSubmit.getLanguage();
         String code = questionSubmit.getCode();
         String judgeCase = question.getJudgeCase();
+        Integer isSpecial = question.getIsSpecial();
         List<JudgeCase> judgeCaseList = JSONUtil.toList(judgeCase, JudgeCase.class);
         List<String> inputList = judgeCaseList.stream().map(JudgeCase::getInput).collect(Collectors.toList());
-        CodeSandBoxRequest sandBoxRequest = CodeSandBoxRequest.builder().language(language).code(code).inputList(inputList).build();
+        CodeSandBoxRequest sandBoxRequest = CodeSandBoxRequest.builder().language(language).code(code).inputList(inputList).is_special(isSpecial).build();
         // 调用沙箱
         CodeSandBoxResponse codeSandBoxResponse = codeSandBox.run(sandBoxRequest);
         // 获取编译和运行响应信息
         String compileMessage = codeSandBoxResponse.getCompileMessage();
         String runTimeMessage = codeSandBoxResponse.getRuntimeMessage();
         List<String> outputList = codeSandBoxResponse.getOutputList();
+        String specialJudgeMessage = codeSandBoxResponse.getSpecialJudgeMessage();
 
-        // 3.根据沙箱的执行结果，执行判题逻辑，设置题目的判题状态和信息
+        // 3.根据沙箱的执行结果，执行判题逻辑
         JudgeContext judgeContext = new JudgeContext();
         judgeContext.setJudgeInfo(codeSandBoxResponse.getJudgeInfo());
         judgeContext.setInputList(inputList);
@@ -94,8 +96,10 @@ public class JudgeServiceImpl implements JudgeService{
         judgeContext.setQuestionSubmit(questionSubmit);
         judgeContext.setCompileMessage(compileMessage);
         judgeContext.setRunTimeMessage(runTimeMessage);
+        judgeContext.setSpecialJudgeMessage(specialJudgeMessage);
         JudgeInfo judgeInfo = judgeManager.doJudge(judgeContext);
         String status = judgeInfo.getMessage();
+        System.out.println("status: " + status);
         // 4.更新题目提交表
         updateQuestionSubmit = new QuestionSubmit();
         updateQuestionSubmit.setJudgeInfo(JSONUtil.toJsonStr(judgeInfo));
@@ -105,6 +109,7 @@ public class JudgeServiceImpl implements JudgeService{
         if(!update){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目状态更新错误");
         }
+
         QuestionSubmit questionSubmitResult = questionFeignClient.getQuestionSubmitById(questionSubmitId);
         return questionSubmitResult;
     }

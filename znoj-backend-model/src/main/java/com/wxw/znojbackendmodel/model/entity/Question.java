@@ -91,6 +91,10 @@ public class Question implements Serializable {
      * 是否删除
      */
     private Integer isDelete;
+    /**
+     * 是否为特判题
+     */
+    private Integer isSpecial;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

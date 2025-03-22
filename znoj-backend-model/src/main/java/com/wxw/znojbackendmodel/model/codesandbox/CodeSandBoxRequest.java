@@ -24,4 +24,6 @@ public class CodeSandBoxRequest {
     private String language;
 
     private List<String> inputList;
+
+    private Integer is_special;
 }

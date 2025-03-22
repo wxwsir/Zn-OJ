@@ -1,9 +1,6 @@
 package com.wxw.znojbackendjudgeservice.judge;
 
-import com.wxw.znojbackendjudgeservice.judge.strategy.DefaultJudgeStrategy;
-import com.wxw.znojbackendjudgeservice.judge.strategy.JavaJudgeStrategy;
-import com.wxw.znojbackendjudgeservice.judge.strategy.JudgeContext;
-import com.wxw.znojbackendjudgeservice.judge.strategy.JudgeStrategy;
+import com.wxw.znojbackendjudgeservice.judge.strategy.*;
 import com.wxw.znojbackendmodel.model.codesandbox.JudgeInfo;
 import com.wxw.znojbackendmodel.model.entity.QuestionSubmit;
 import org.springframework.stereotype.Service;
@@ -22,7 +19,12 @@ public class JudgeManager {
         String language = questionSubmit.getLanguage();
         JudgeStrategy judgeStrategy = new DefaultJudgeStrategy();
         if ("java".equals(language)) {
-            judgeStrategy = new JavaJudgeStrategy();
+            if (judgeContext.getSpecialJudgeMessage() != null) {
+                judgeStrategy = new SpecialJudgeStrategy();
+                System.out.println("特殊判题策略");
+            }else {
+                judgeStrategy = new JavaJudgeStrategy();
+            }
         }
         JudgeInfo judgeInfo = judgeStrategy.doJudge(judgeContext);
         return judgeInfo;

@@ -29,6 +29,8 @@ public class JudgeContext {
 
     private String runTimeMessage;
 
+    private String specialJudgeMessage;
+
     private Question question;
 
     private QuestionSubmit questionSubmit;
